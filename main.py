@@ -1,5 +1,5 @@
 from os import getenv
-from discord import Client, Message, TextChannel
+from discord import Client, Intents, Message, TextChannel, Member
 from discord.ext import tasks
 from datetime import datetime
 from requests import head
@@ -7,8 +7,11 @@ from requests import head
 token = getenv('BOT_TOKEN')
 prefix = getenv('BOT_PREFIX') or '!'
 api_url = getenv('API_URL')
+role_id = getenv('ID_ROLE')
 
-client = Client()
+intents = Intents.default()
+intents.members = True
+client = Client(intents=intents)
 
 
 @tasks.loop(minutes=1)
@@ -55,6 +58,18 @@ async def on_message(message: Message):
             await task(message.channel)
         case _:
             await message.channel.send('Unknown command!')
+
+
+@client.event
+async def on_member_join(member: Member):
+    if role_id is None:
+        return
+
+    role = member.guild.get_role(int(role_id))
+    if role is None:
+        return
+
+    await member.add_roles(role)
 
 
 @client.event
