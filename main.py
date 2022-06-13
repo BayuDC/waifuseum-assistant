@@ -7,7 +7,7 @@ from requests import head
 token = getenv('BOT_TOKEN')
 prefix = getenv('BOT_PREFIX') or '!'
 api_url = getenv('API_URL')
-role_id = getenv('ID_ROLE')
+member_id = getenv('ID_MEMBER')
 
 intents = Intents.default()
 intents.members = True
@@ -62,10 +62,10 @@ async def on_message(message: Message):
 
 @client.event
 async def on_member_join(member: Member):
-    if role_id is None:
+    if member_id is None:
         return
 
-    role = member.guild.get_role(int(role_id))
+    role = member.guild.get_role(int(member_id))
     if role is None:
         return
 
