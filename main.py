@@ -1,4 +1,4 @@
-from discord import Client, Intents, Message, TextChannel, Member
+from discord import Client, Intents, Message, Embed, TextChannel, Member, Color
 from discord.ext import tasks
 from datetime import datetime
 from requests import head
@@ -30,25 +30,31 @@ async def on_message(message: Message):
 
     match command.lower():
         case 'ping':
-            await message.channel.send('Pong!')
+            embed = Embed(colour=Color.from_rgb(24, 116, 152), title=':ping_pong: Pong!', description=f'Ping Latency : {client.latency}s')
+            await message.channel.send(embed=embed)
         case 'say':
             await message.channel.send(' '.join(args))
         case 'start':
             if task.is_running():
-                return await message.channel.send('Task is already running!')
+                embed = Embed(colour=Color.from_rgb(249, 217, 35), description=':warning: Task is already running!')
+                return await message.channel.send(embed=embed)
 
-            await message.channel.send('Starting task...')
+            embed = Embed(colour=Color.from_rgb(54, 174, 124), description=':white_check_mark: Starting task...')
+            await message.channel.send(embed=embed)
             task.start(message.channel)
         case 'stop':
             if not task.is_running():
-                return await message.channel.send('Task is not running!')
+                embed = Embed(colour=Color.from_rgb(235, 83, 83), description=':x: Task is not running!')
+                return await message.channel.send(embed=embed)
 
-            await message.channel.send('Stoping task...')
+            embed = Embed(colour=Color.from_rgb(54, 174, 124), description=':white_check_mark: Stoping task...')
+            await message.channel.send(embed=embed)
             task.stop()
         case 'status':
             await task(message.channel)
         case _:
-            await message.channel.send('Unknown command!')
+            embed = Embed(colour=Color.from_rgb(235, 83, 83), description=':x: Unknown command!')
+            await message.channel.send(embed=embed)
 
 
 @client.event
